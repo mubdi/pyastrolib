@@ -34,12 +34,16 @@ def adstring(ra_dec, dec="", precision="", truncate=""):
   if n.size(ra) != n.size(dec):
     raise TypeError, 'ERROR - RA and Declination do not have equal number of elements'
 
+  if n.size(ra) == n.size(dec):
+      badrange = n.where( (dec > 90 ) or (dec < -90)  )
+      if n.size(badrange) > 0:
+          print "Warning:  Some declination values are out of valid range (-90 < dec <90)"
+          
+          
 
 
 
-
-
-  return true
+  return 0
 
 
 if __name__ == '__main__':
