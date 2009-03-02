@@ -32,8 +32,9 @@ def adstring(ra_dec, dec="", precision="", truncate=""):
   else: ra = ra_dec
   
   if n.size(ra) != n.size(dec):
-    print "ERROR - RA and Declination do not have equal number of elements"
-    return false
+    raise TypeError, 'ERROR - RA and Declination do not have equal number of elements'
+
+
 
 
 
