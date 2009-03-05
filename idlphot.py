@@ -18,6 +18,49 @@ import numpy
 import scipy.ndimage
 import pyfits
 
+
+
+def aper(image, xc, yc, mags, errap, sky, skyerr, phpadu, apr, skyrad, badpix=None, SETSKYVAL=None, PRINT=True, SILENT=True, FLUX=None, EXACT=None, Nan=numpy.nan, READNOISE=None, MEANBACK=None, CLIPSIG=None, MAXITER=None, CONVERGE_NUM=None):
+    """
+    """
+    dimx,dimy = image.shape # Number of columns and rows in image array
+    naper = apr.size # Number of apertures
+    nstars = xc.size # Number of stars
+    area = PI*apr**2 # Area of each aperture
+
+    bigrad = apr + 0.5 # Big radius for subpixel approximation
+    smallrad = apr/numpy.sqrt(2.) - 0.5 # Small radius for subpixel approximation
+
+    rinsq =  skyrad[0]**2 # inner sky radius squared
+    routsq = skyrad[1]**2 # outer sky radius squared
+    
+    ###
+    # Compute the limits of the submatrix.   Do all stars in vector notation.
+    ###
+    lx = (xc-skyrad[1]).astype(int) # Lower limit X direction
+    ux = (xc+skyrad[1]).astype(int) # Upper limit X direction
+    nx = ux-lx+1 # Number of pixels X direction
+    ly = (yc-skyrad[1]).astype(int) # Lower limit Y direction
+    uy = (yc+skyrad[1]).astype(int) # Upper limit Y direction
+    ny = uy-ly +1 # Number of pixels Y direction
+    dx = xc-lx # X coordinate of star's centroid in subarray
+    dy = yc-ly # Y coordinate of star's centroid in subarray
+
+    badstar = (lx < 0) * (ux > dimx) * (ly < 0) * (uy > dimy) # Stars too close to the edge
+    
+    nbox = numpy.ceil(skyrad)
+    
+    temp = numpy.arange(nbox)-middle # make 1D indices of the kernel box
+    temp = numpy.resize(temp, (nbox,nbox)) # make 2D indices of the kernel box (for x or y)
+    offsetsx = numpy.resize(temp, (nfound,nbox,nbox)) # make 2D indices of the kernel box for x, repeated nfound times
+    offsetsy = numpy.resize(temp.T, (nfound,nbox,nbox)) # make 2D indices of the kernel box for y, repeated nfound times
+    offsetsx = (indx + offsetsx.swapaxes(0,-1)).swapaxes(0,-1) # make it relative to image coordinate
+    offsetsy = (indy + offsetsy.swapaxes(0,-1)).swapaxes(0,-1) # make it relative to image coordinate
+    offsets_vals = image[offsetsx,offsetsy] # a (nfound, nbox, nbox) array of values (i.e. the kernel box values for each nfound candidate)
+
+    return None
+
+
 def find(image, hmin, fwhm, roundlim=[-1.,1.], sharplim=[0.2,1.]):
     """find(image, hmin, fwhm, roundlim=[-1.,1.], sharplim=[0.2,1.])
     Identifies stars in an image.
