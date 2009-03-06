@@ -18,6 +18,9 @@ import numpy as n
 
 def adstring(ra_dec, dec="", precision="", truncate=""):
   
+
+  # Testing Input Parameters
+
   if n.size(ra_dec) == 1:
     if not dec:
       dec = ra_dec
@@ -37,13 +40,44 @@ def adstring(ra_dec, dec="", precision="", truncate=""):
   if n.size(ra) == n.size(dec):
       badrange = n.where( (dec > 90 ) or (dec < -90)  )
       if n.size(badrange) > 0:
-          print "Warning:  Some declination values are out of valid range (-90 < dec <90)"
-          
-          
+        print "Warning:  Some declination values are out of valid range (-90 < dec <90)"
+                    
 
 
 
   return 0
+
+
+def radec(ra, dec, hours=""):
+
+  # Compute RA
+  if(hours):
+    ra =  n.mod(ra, 24)
+    ra = ra + 24*(n.less(ra, 0) )
+    ihr = n.fix(ra)
+    xmin = n.abs(ra*60.0 - ihr*60.0)
+  else:
+    ra = n.mod(ra, 360)
+    ra = ra + 360*(n.less(ra, 0))
+    ihr = n.fix(ra/15.0)
+    xmin = n.abs(ra*4.0 - ihr*60.0)
+
+  imin = n.fix(xmin)
+  xsec = (xmin - imin)*60.0
+
+  # Compute Dec
+  ideg = n.fix(dec)
+  xmn = n.abs(dec - ideg)*60.0
+  imn = n.fix(xmn)
+  xsc = (xmn - imn)*60.0
+
+  # Testing for Special Case of Zero Degrees
+
+  zero_deg = n.equal(ideg, 0)  & n.less(dec, 0) 
+  imn = imn - 2*imn*n.fix( zero_deg * ( n.not_equal(imn,0) ) )
+  xsc = xsc - 2 *xsc*zero_deg*(n.equal(imn, 0) )  
+
+  return ihr, imin, xsec, ideg, imn, xsc
 
 
 if __name__ == '__main__':
