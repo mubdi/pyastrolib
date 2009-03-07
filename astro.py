@@ -47,7 +47,6 @@ def adstring(ra_dec, dec="", precision="", truncate=""):
 
   return 0
 
-
 def radec(ra, dec, hours=""):
   """radec(ra, dec, hours="")
   Converts RA and Dec from decimal to sexigesimal units
@@ -105,7 +104,6 @@ def radec(ra, dec, hours=""):
 
   return ihr, imin, xsec, ideg, imn, xsc
 
-
 def sixty(scalar):
     """ sixty(scalar)
     Converts a decimal number to sexigesimal
@@ -145,6 +143,10 @@ def sixty(scalar):
             result[1] = -result[1]
         else: 
             result[2] = -result[2]
+    
+    return result
+
+def ten(dd, mm="", ss=""):
     
     return result
 
