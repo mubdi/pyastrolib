@@ -49,6 +49,32 @@ def adstring(ra_dec, dec="", precision="", truncate=""):
 
 
 def radec(ra, dec, hours=""):
+  """radec(ra, dec, hours="")
+  Converts RA and Dec from decimal to sexigesimal units
+  Returns a tuple (ihr, imin, xsec, imn, wsc)
+  
+  INPUTS:
+    ra - right ascension, float or array, in degrees unless 
+         "hours" is set
+    dec - declination in decimal degrees, float or array, same
+          number of elements as ra     
+  
+  OPTIONAL INPUT:
+    hours - if set to true, then the right ascension input should
+            be set to hours instead of degrees
+            
+  OUTPUTS:
+    ihr - right ascension hours (float or array)
+    imin - right ascension minutes (float or array)
+    xsec - right ascension seconds (float or array)
+    ideg - declination degrees (float or array)
+    imn - declination minutes (float or array)
+    xsc - declination seconds (float or array)         
+  
+  >>> radec(0,0) 
+  array(0,0,0,0,0)
+  """
+
 
   # Compute RA
   if(hours):
