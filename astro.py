@@ -106,6 +106,48 @@ def radec(ra, dec, hours=""):
   return ihr, imin, xsec, ideg, imn, xsc
 
 
+def sixty(scalar):
+    """ sixty(scalar)
+    Converts a decimal number to sexigesimal
+    returns a three element array
+    
+    INPUTS: 
+      scalar - Decimal Quantity
+      
+    OUTPUTS: 
+      result - three element array of sexigesimal equivalent.
+               If the scalar is negative, the first non-zero
+               element in the result will have a negative sign
+               
+    COMPATIBILITY NOTES:
+      1. Since python does not support negative zeros, the trail
+         sign keyword from the IDL procedure has been removed
+    
+    >>>sixty(53)
+    [53.0, 0.0, 0.0]
+    """
+    if n.size(scalar) != 1:
+            raise TypeError, 'ERROR - Parameter must contain 1 element'
+    
+    ss = n.abs(3600.0 * scalar)
+    mm = n.abs(60.0 * scalar)
+    dd = n.abs(scalar)
+    result = n.zeros(3, float)  
+    
+    result[0] = n.fix(dd)
+    result[1] = n.fix(mm - 60.0*result[0] )
+    result[2] = ss - 3600.0*result[0] - 60.0*result[1]
+    
+    if scalar < 0.0:
+        if result[0] != 0:
+            result[0] = -result[0]
+        elif result[1] != 0:
+            result[1] = -result[1]
+        else: 
+            result[2] = -result[2]
+    
+    return result
+
 if __name__ == '__main__':
   # The following two lines will test all functions in the module.
   # Run `python astro.py -v` to see verbose output.  It's probably best to rely
