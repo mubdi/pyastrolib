@@ -351,6 +351,36 @@ def ten(dd, mm="", ss=""):
        
     return decim
 
+def vactoair(wave):
+    """ vactoair(wave)
+    Converts vacuum wavelengths to air wavelengths
+    returns a float or array of wavelengths
+    
+    INPUTS: 
+      wave - Wavelengths in a vacuum, in Angstroms, float or array
+      
+    OUTPUTS: 
+      newwave - Wavelengths in air, in Angstroms, float or
+                array
+               
+    NOTES:
+      1. The procedure uses the same method as the IDL astrolib
+         procedure, last updated September 1997
+    
+    >>>vactoair(1000.0)
+    1000.0
+    """
+
+    wave = n.array(wave,float)
+    
+    wave2 = (wave)**2
+    fact = 1.0 + 2.735182e-4 + 131.4182/wave2 + 2.76249e8/(wave2*wave2)
+    fact = fact * ( wave >= 2000. ) + 1.0*( wave < 2000.0 )
+  
+    newwave = wave/fact
+    
+    return newwave
+
 if __name__ == '__main__':
   # The following two lines will test all functions in the module.
   # Run `python astro.py -v` to see verbose output.  It's probably best to rely
