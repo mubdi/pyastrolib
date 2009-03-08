@@ -47,6 +47,33 @@ def adstring(ra_dec, dec="", precision="", truncate=""):
 
   return 0
 
+def ccm_unred(wave, flux, ebv, r_v=""):
+    
+    wave = n.array(wave, float)
+    flux = n.array(flux, float)
+    
+    if wave.size != flux.size: raise TypeError, 'ERROR - wave and flux vectors must be the same size'
+    
+    if not bool(r_v): r_v = 3.1 
+
+    x = 10000.0/wave
+    npts = wave.size
+    a = n.zeros(npts, float)
+    b = n.zeros(npts, float)
+    
+    ###############################
+    #Infrared
+    
+    good = n.where( (x > 0.3) & (x < 1.1) )
+    a[good] = 0.574 * x[good]**(1.61)
+    b[good] = -0.527 * x[good]**(1.61)
+    
+    
+    ###############################
+    return funred
+
+
+
 def radec(ra, dec, hours=""):
   """radec(ra, dec, hours="")
   Converts RA and Dec from decimal to sexigesimal units
