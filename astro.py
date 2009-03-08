@@ -47,6 +47,42 @@ def adstring(ra_dec, dec="", precision="", truncate=""):
 
   return 0
 
+def airtovac(wave):
+    """ airtovac(wave)
+    Converts air wavelengths to vaccuum wavelengths
+    returns a float or array of wavelengths
+    
+    INPUTS: 
+      wave - Wavelengths in air, in Angstroms, float or array
+      
+    OUTPUTS: 
+      newwave - Wavelengths in a vacuum, in Angstroms, float or
+                array
+               
+    NOTES:
+      1. The procedure uses the IAU standard conversion formula
+         from Morton (1991 Ap. J. Suppl. 77, 119)
+    
+    >>>airtovac(1000.0)
+    1000.0
+    """
+
+    wave = n.array(wave,float)
+    
+    # Converting to Wavenumber squared
+    sigma2 = (1.0e4/wave)**2
+    
+    # Computing conversion factor
+    
+    fact = 1.0 + 6.4328e-5 + 2.94981e-2/(146.0 - sigma2) + \
+    2.5540e-4/( 41.0 - sigma2)
+    
+    fact = fact*(wave >= 2000.0) + 1.0*(wave < 2000.0)
+    
+    newwave = wave*fact
+    
+    return newwave
+
 def ccm_unred(wave, flux, ebv, r_v=""):
     """ccm_unred(wave, flux, ebv, r_v="")
     Deredden a flux vector using the CCM 1989 parameterization 
