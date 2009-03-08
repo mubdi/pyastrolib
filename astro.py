@@ -68,11 +68,55 @@ def ccm_unred(wave, flux, ebv, r_v=""):
     a[good] = 0.574 * x[good]**(1.61)
     b[good] = -0.527 * x[good]**(1.61)
     
+    ###############################
+    # Optical & Near IR
+
+    good = n.where( (x  >= 1.1) & (x < 3.3) )
+    y = x[good] - 1.82
+    
+    c1 = n.array([ 1.0 , 0.104,   -0.609,    0.701,  1.137, \
+                  -1.718,   -0.827,    1.647, -0.505 ])
+    c2 = n.array([ 0.0,  1.952,    2.908,   -3.989, -7.985, \
+                  11.102,    5.491,  -10.805,  3.347 ] )
+
+    a[good] = n.polyval(c1[::-1], y)
+    b[good] = n.polyval(c2[::-1], y)
+
+    ###############################
+    # Mid-UV
+    
+    good = n.where( (x >= 3.3) & (x < 8) )   
+    y = x[good]
+    F_a = n.zeros(n.size(good),float)
+    F_b = n.zeros(n.size(good),float)
+    good1 = n.where( y > 5.9 )    
+    
+    if n.size(good1) > 0:
+        y1 = y[good1] - 5.9
+        F_a[ good1] = -0.04473 * y1**2 - 0.009779 * y1**3
+        F_b[ good1] =   0.2130 * y1**2  +  0.1207 * y1**3
+
+    a[good] =  1.752 - 0.316*y - (0.104 / ( (y-4.67)**2 + 0.341 )) + F_a
+    b[good] = -3.090 + 1.825*y + (1.206 / ( (y-4.62)**2 + 0.263 )) + F_b
     
     ###############################
+    # Far-UV
+    
+    good = n.where( (x >= 8) & (x <= 11) )   
+    y = x[good] - 8.0
+    c1 = [ -1.073, -0.628,  0.137, -0.070 ]
+    c2 = [ 13.670,  4.257, -0.420,  0.374 ]
+    a[good] = n.polyval(c1[::-1], y)
+    b[good] = n.polyval(c2[::-1], y)
+
+    # Applying Extinction Correction
+    
+    a_v = r_v * ebv
+    a_lambda = a_v * (a + b/r_v)
+    
+    funred = flux * 10.0**(0.4*a_lambda)   
+
     return funred
-
-
 
 def radec(ra, dec, hours=""):
   """radec(ra, dec, hours="")
