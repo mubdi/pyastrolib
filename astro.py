@@ -83,6 +83,51 @@ def airtovac(wave):
     
     return newwave
 
+def aitoff(l, b):
+    """ aitoff(l, b)
+    Converts longitude, latitude to X, Y using an AITOFF projection
+    Returns at tuple (x, y)
+    
+    INPUTS: 
+      l - longitude, float or array, in degrees
+      b - latitude in degrees (same number of elements as l)
+      
+    OUTPUTS:
+      x - x coordinate, (same number of elements as l). x is
+          normalized to be between -180 and 180
+          
+      y - y coordinate, (same number of elements as l). y is
+          normalized to be between -90 and 90
+    
+    NOTES: 
+      1. Converted from the IDL astrolib procedure, last updated
+         September 1997.
+      2. Procedure uses algorithm from AIPS memo No. 46, page 4.
+         This version of AITOFF assumes the projection is centred
+         at b = 0 degrees.
+         
+    >>> aitoff(0.0,0.0)
+    (0.0, 0.0)
+    """
+    
+    sa = n.array(l, float)
+    b = n.array(b, float)
+    x180 = n.where(sa > 180.0)
+    
+    if n.size(x180) > 0: sa[x180] = sa[x180] - 360.0
+    alpha2 = sa/(2*180.0/n.math.pi)
+    delta = b/(180.0/n.math.pi)
+    r2 = n.sqrt(2.0)
+    f = 2.0 * r2 / n.math.pi
+    cdec = n.cos(delta)    
+    denom =n.sqrt(1. + cdec*n.cos(alpha2))
+    x = cdec*n.sin(alpha2)*2.*r2/denom
+    y = n.sin(delta)*r2/denom
+    x = x*(180.0/n.math.pi)/f
+    y = y*(180.0/n.math.pi)/f
+    
+    return x, y
+
 def ccm_unred(wave, flux, ebv, r_v=""):
     """ccm_unred(wave, flux, ebv, r_v="")
     Deredden a flux vector using the CCM 1989 parameterization 
