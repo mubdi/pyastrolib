@@ -147,8 +147,54 @@ def sixty(scalar):
     return result
 
 def ten(dd, mm="", ss=""):
+    """ ten(dd, mm="", ss="")
+    Converts a sexigesimal number to decimal 
+    returns a float
     
-    return result
+    INPUTS: 
+      dd - Either a scalar representing the hours or degrees
+           or a 3 element array representing all three sexigesimal
+           quantities
+      mm - A scalar representing the minutes (optional)
+      ss - A scalar representing the seconds (optional)   
+      
+    OUTPUTS: 
+      result - A scalar representing the decimal quantity
+               If any of the input elements are negative, the 
+               result will have a negative sign
+               
+    >>>ten(2, 60, 3600)
+    4.0
+    """
+    
+    if (not bool(mm) and (not bool(ss)) ):
+        vector = n.array(dd)
+    else:
+        vector = n.zeros(3, float)
+        vector[0] = dd
+        vector[1] = mm
+        if (bool(ss)): vector[2] = ss
+      
+    ndim = n.ndim(vector)
+    nel = n.size(vector)
+
+    if nel > 3: raise TypeError, 'ERROR - There can be no more than 3 elements in the input'
+
+    if ndim == 0: return vector
+    
+    facs = [1.0, 60.0, 3600.0]
+    
+    negsign = bool(n.sum(n.where(vector < 0)))
+    
+    vector = n.abs(vector)
+    decim = 0.0
+    
+    for i in range(nel):
+        decim = decim + vector[i]/facs[i] 
+    
+    if negsign: decim = decim * -1.0
+       
+    return decim
 
 if __name__ == '__main__':
   # The following two lines will test all functions in the module.
