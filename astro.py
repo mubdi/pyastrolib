@@ -48,7 +48,55 @@ def adstring(ra_dec, dec="", precision="", truncate=""):
   return 0
 
 def ccm_unred(wave, flux, ebv, r_v=""):
-    
+    """ccm_unred(wave, flux, ebv, r_v="")
+    Deredden a flux vector using the CCM 1989 parameterization 
+    Returns an array of the unreddened flux
+  
+    INPUTS:
+    wave - array of wavelengths (in Angstroms)
+    dec - calibrated flux array, same number of elements as wave
+    ebv - colour excess E(B-V) float. If a negative ebv is supplied
+          fluxes will be reddened rather than dereddened     
+  
+    OPTIONAL INPUT:
+    r_v - float specifying the ratio of total selective
+          extinction R(V) = A(V)/E(B-V). If not specified,
+          then r_v = 3.1
+            
+    OUTPUTS:
+    funred - unreddened calibrated flux array, same number of 
+             elements as wave
+             
+    NOTES:
+    1. This function was converted from the IDL Astrolib procedure
+       last updated in April 1998. All notes from that function
+       (provided below) are relevant to this function 
+       
+    2. (From IDL:) The CCM curve shows good agreement with the Savage & Mathis (1979)
+       ultraviolet curve shortward of 1400 A, but is probably
+       preferable between 1200 and 1400 A.
+
+    3. (From IDL:) Many sightlines with peculiar ultraviolet interstellar extinction 
+       can be represented with a CCM curve, if the proper value of 
+       R(V) is supplied.
+
+    4. (From IDL:) Curve is extrapolated between 912 and 1000 A as suggested by
+       Longo et al. (1989, ApJ, 339,474)
+
+    5. (From IDL:) Use the 4 parameter calling sequence if you wish to save the 
+       original flux vector.
+
+    6. (From IDL:) Valencic et al. (2004, ApJ, 616, 912) revise the ultraviolet CCM
+       curve (3.3 -- 8.0 um-1).    But since their revised curve does
+       not connect smoothly with longer and shorter wavelengths, it is
+       not included here.
+ 
+    7. For the optical/NIR transformation, the coefficients from 
+       O'Donnell (1994) are used
+  
+    >>> ccm_unred([1000, 2000, 3000], [1, 1, 1], 2 ) 
+    array([9.7976e+012, 1.12064e+07, 32287.1])
+    """
     wave = n.array(wave, float)
     flux = n.array(flux, float)
     
