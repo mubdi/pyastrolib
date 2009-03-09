@@ -247,6 +247,44 @@ def ccm_unred(wave, flux, ebv, r_v=""):
 
     return funred
 
+def flux2mag(flux, zero_pt="", abwave=""):
+    """ flux2mag(flux, zero_pt="", abwave="")
+    Convert from flux (ergs/s/cm^2/A) to magnitudes
+    returns a float or array of magnitudes
+    
+    INPUTS: 
+      flux -  float or array flux vector, in erg cm-2 s-1 A-1
+
+    OPTIONAL INPUTS:
+      zero_pt - float giving the zero point level of the magnitude.
+                If not supplied then zero_pt = 21.1 (Code et al 1976)
+                Ignored if the abwave is supplied
+      abwave - wavelength float or array in Angstroms.   If supplied, then 
+               FLUX2MAG() returns Oke AB magnitudes (Oke & Gunn 1983, ApJ, 266,
+               713). 
+      
+    OUTPUTS: 
+      mag - magnitude vector.
+        
+    NOTES:
+      1. If the abwave input is set then mag is given by the expression 
+         abmag = -2.5*alog10(f) - 5*alog10(abwave) - 2.406
+         Otherwise, mag is given by the expression
+         mag = -2.5*alog10(flux) - zero_pt
+    
+    >>>flux2mag(10.0)
+    -23.6
+    """
+
+    if not bool(zero_pt): zero_pt = 21.10        #Default zero pt
+    
+    if abwave != "":
+        mag = -2.5*n.log10(flux) - 5*n.log10(abwave) - 2.406
+    else:
+        mag = -2.5*n.log10(flux) - zero_pt    
+     
+    return mag
+
 def radec(ra, dec, hours=""):
   """radec(ra, dec, hours="")
   Converts RA and Dec from decimal to sexigesimal units
