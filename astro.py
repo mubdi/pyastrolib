@@ -128,6 +128,53 @@ def aitoff(l, b):
     
     return x, y
 
+def altaz2hadec(alt, az, lat):
+    """ altaz2hadec(alt, az, lat)
+    Converts Horizon (Alt-Az) coordinates to Hour Angle and Declination
+    Returns at tuple (ha, dec)
+    
+    INPUTS: 
+      alt - the local apparent altitude, in DEGREES, scalar or vector
+      az  - the local apparent azimuth, in DEGREES, scalar or vector,
+            measured EAST of NORTH!!!  If you have measured azimuth west-of-south
+            (like the book MEEUS does), convert it to east of north via:
+                        az = (az + 180) mod 360
+      lat -  the local geodetic latitude, in DEGREES, scalar or vector.
+      
+    OUTPUTS:
+      ha  -  the local apparent hour angle, in DEGREES.  The hour angle is the 
+             time that right ascension of 0 hours crosses the local meridian.  
+             It is unambiguously defined.
+      dec -  the local apparent declination, in DEGREES.
+    
+    NOTES: 
+      1. Converted from the IDL astrolib procedure, last updated
+         May 2002.
+         
+    >>> altaz2hadec(ten(59, 05, 10), ten(133, 18, 29), 43.07833)  
+     (336.6828582472844, 19.182450965120406)
+    """
+        
+    d2r = n.math.pi / 180.0 
+    alt_r = alt*d2r
+    alt_r  = alt*d2r
+    az_r = az*d2r
+    lat_r = lat*d2r
+    
+    # find local HOUR ANGLE (in degrees, from 0. to 360.)
+    ha = n.math.atan2(-n.sin(az_r)*n.cos(alt_r), -n.cos(az_r)*n.sin(lat_r)*n.cos(alt_r)+n.sin(alt_r)*n.cos(lat_r) )
+    ha = n.array((ha / d2r), float)
+    w = n.where(ha < 0.0)
+    if n.size(w) != 0: ha[w] = ha[w] + 360.0
+    
+    ha = n.mod(ha, 360.0)
+    
+    # Find declination (positive if north of Celestial Equator, negative if south)
+    sindec = n.sin(lat_r)*n.sin(alt_r) + n.cos(lat_r)*n.cos(alt_r)*n.cos(az_r)
+    dec = n.math.asin(sindec)/d2r  # convert dec to degrees
+    
+    return ha, dec
+
 def ccm_unred(wave, flux, ebv, r_v=""):
     """ccm_unred(wave, flux, ebv, r_v="")
     Deredden a flux vector using the CCM 1989 parameterization 
