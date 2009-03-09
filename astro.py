@@ -426,6 +426,44 @@ def vactoair(wave):
     
     return newwave
 
+def planck(wave, temp):
+    """ planck(wave, temp)
+    Converts vacuum wavelengths to air wavelengths
+    returns a float or array of blackbody flux
+    
+    INPUTS: 
+      wave - Wavelengths in Angstroms, float or array
+      temp - Temperature in Kelvin, float
+      
+    OUTPUTS: 
+      bbflux - Blackbody flux in erg/cm**2/s/A for all points
+               in wave, float or array
+               
+    NOTES:
+      1. The procedure uses the same method as the IDL astrolib
+         procedure, last updated January 2002
+    
+    >>>planck(1000.0, 5000.0)
+    2231170.408
+    """
+
+    wave = n.array(wave, float)
+    
+    bbflux = wave*0.0
+
+    # Gives the blackbody flux (i.e. PI*Intensity) ergs/cm2/s/a
+    w = wave / 1.0E8 #Angstroms to cm    
+
+    #constants appropriate to cgs units.
+    c1 =  3.7417749e-5  # =2*!DPI*h*c*c       
+    c2 =  1.4387687      # =h*c/k
+    val =  c2/w/temp
+    
+    bbflux =  c1 / ( w**5 * ( n.exp(val)-1.0 ) )
+    
+    return bbflux*1.0E-8              # Convert to ergs/cm2/s/A
+
+
 if __name__ == '__main__':
   # The following two lines will test all functions in the module.
   # Run `python astro.py -v` to see verbose output.  It's probably best to rely
