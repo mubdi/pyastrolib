@@ -332,6 +332,12 @@ def flux2mag(flux, zero_pt="", abwave=""):
      
     return mag
 
+def imf(mass, expon, mass_range ):
+    
+    
+
+    return psi; 
+
 def radec(ra, dec, hours=""):
   """radec(ra, dec, hours="")
   Converts RA and Dec from decimal to sexigesimal units
